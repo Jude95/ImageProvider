@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jude.library.R;
+import com.jude.library.imageprovider.ImageProvider;
 import com.jude.library.imageprovider.Utils;
 import com.jude.library.imageprovider.net.searchers.SosoSearcher;
 import com.jude.library.imageprovider.net.utils.ImageLoader;
@@ -220,14 +221,12 @@ public class NetImageSearchActivity extends AppCompatActivity {
     }
 
     class GridViewAdapter extends BaseAdapter {
-        String[] hint = {
-                "拥抱","梦幻","爱情","唯美","汪星人","美好","风景","孤独","插画"
-        };
+
 
 
         @Override
         public int getCount() {
-            return hint.length;
+            return ImageProvider.mRecommendList.length;
         }
 
         @Override
@@ -249,7 +248,7 @@ public class NetImageSearchActivity extends AppCompatActivity {
             view.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.dip2px(48)));
             view.setGravity(Gravity.CENTER);
             view.setTextColor(getResources().getColor(android.R.color.white));
-            view.setText(hint[position]);
+            view.setText(ImageProvider.mRecommendList[position]);
             return view;
         }
 

@@ -29,6 +29,14 @@ public class ImageProvider {
     private File dir;
     private File tempImage;
 
+    public static String[] mRecommendList = {
+            "拥抱","梦幻","爱情","唯美","汪星人","美好","风景","孤独","插画"
+    };
+
+    public static void setNetRecommendList(String[] list){
+        mRecommendList = list;
+    }
+
     public ImageProvider(Activity act){
         this.act = act;
         Utils.initialize(act.getApplication(), "imageLog");
