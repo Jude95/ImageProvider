@@ -31,8 +31,7 @@ public class ImageCache extends LruCache<String, Bitmap>{
 		        cacheDir.mkdirs();  
 		    }
 		    mDiskLruCache = DiskLruCache.open(cacheDir, getAppVersion(ctx), 1, DiskCacheSize);
-		} catch (IOException e) {  
-		    e.printStackTrace();  
+		} catch (IOException e) {
 		}  
 	}
 
@@ -54,7 +53,6 @@ public class ImageCache extends LruCache<String, Bitmap>{
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, editor.newOutputStream(0));
 			editor.commit();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -74,7 +72,6 @@ public class ImageCache extends LruCache<String, Bitmap>{
 				bitmap = BitmapFactory.decodeStream(snapShot.getInputStream(0));
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return bitmap;
 	}
@@ -91,8 +88,7 @@ public class ImageCache extends LruCache<String, Bitmap>{
 	    try {  
 	        PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);  
 	        return info.versionCode;  
-	    } catch (NameNotFoundException e) {  
-	        e.printStackTrace();  
+	    } catch (NameNotFoundException e) {
 	    }  
 	    return 1;  
 	} 

@@ -153,16 +153,27 @@ public class NetImageSearchActivity extends AppCompatActivity {
                 int height = width*arr.get(arg1).getHeight()/arr.get(arg1).getWidth();
                 arg0.img.setLayoutParams(new FrameLayout.LayoutParams(width,height));
             }
-            arg0.img.setImageBitmap(null);
+            arg0.img.setScaleType(ImageView.ScaleType.CENTER);
+            arg0.img.setImageResource(R.drawable.default_loading);
+            arg0.showed = false;
             String url = arr.get(arg1).getSmallImage();
             ImageLoader.getInstance().image(url, new ImageLoader.ImageCallback() {
                 @Override
                 public void success(Bitmap bitmap) {
-                    arg0.img.setImageBitmap(bitmap);
+                    if (!arg0.showed) {
+                        arg0.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        arg0.img.setImageBitmap(bitmap);
+                        arg0.showed = true;
+                    }
                 }
 
                 @Override
                 public void error() {
+                    if (!arg0.showed) {
+                        arg0.img.setScaleType(ImageView.ScaleType.CENTER);
+                        arg0.img.setImageResource(R.drawable.default_error);
+                        arg0.showed = true;
+                    }
                 }
             });
 
@@ -189,6 +200,8 @@ public class NetImageSearchActivity extends AppCompatActivity {
     class ImageViewHolder extends RecyclerView.ViewHolder{
         public NetImage imageModel;
         public ImageView img;
+        public boolean showed;
+
         public ImageViewHolder(View itemView) {
             super(itemView);
             img = (ImageView) itemView.findViewById(R.id.image);
