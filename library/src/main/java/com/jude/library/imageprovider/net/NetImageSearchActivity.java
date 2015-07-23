@@ -20,6 +20,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jude.library.R;
 import com.jude.library.imageprovider.Utils;
@@ -45,10 +46,10 @@ public class NetImageSearchActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment);
+        ImageLoader.getInstance().init(this);
         Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_return_black);
         setSupportActionBar(toolbar);
-        Utils.initialize(getApplication(), "IMAGE_TOOL");
         recycleview = (RecyclerView) findViewById(R.id.recyclerview);
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recycleview.setLayoutManager(manager);
@@ -97,7 +98,18 @@ public class NetImageSearchActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String response = Utils.sendGet(seacher.getUrl(word, page),"");
+                String response = null;
+                try {
+                    response = Utils.sendGet(seacher.getUrl(word, page), "");
+                } catch (Exception e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(NetImageSearchActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    return;
+                }
                 final NetImage[] images = seacher.getImageList(response);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -107,7 +119,7 @@ public class NetImageSearchActivity extends AppCompatActivity {
                     }
                 });
             }
-        });
+        }).start();
     }
 
 
@@ -141,7 +153,7 @@ public class NetImageSearchActivity extends AppCompatActivity {
                 int height = width*arr.get(arg1).getHeight()/arr.get(arg1).getWidth();
                 arg0.img.setLayoutParams(new FrameLayout.LayoutParams(width,height));
             }
-
+            arg0.img.setImageBitmap(null);
             String url = arr.get(arg1).getSmallImage();
             ImageLoader.getInstance().image(url, new ImageLoader.ImageCallback() {
                 @Override
@@ -151,7 +163,6 @@ public class NetImageSearchActivity extends AppCompatActivity {
 
                 @Override
                 public void error() {
-
                 }
             });
 
@@ -167,13 +178,14 @@ public class NetImageSearchActivity extends AppCompatActivity {
             ImageView img = new ImageView(arg0.getContext());
             img.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
             img.setPadding(Utils.dip2px(4), Utils.dip2px(4), Utils.dip2px(4), Utils.dip2px(4));
-
+            img.setId(R.id.image);
             FrameLayout layout = new FrameLayout(arg0.getContext());
             layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             layout.addView(img);
             return new ImageViewHolder(layout);
         }
     }
+
     class ImageViewHolder extends RecyclerView.ViewHolder{
         public NetImage imageModel;
         public ImageView img;
@@ -186,7 +198,7 @@ public class NetImageSearchActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent();
                     setResult(Activity.RESULT_OK, intent);
-                    intent.putExtra("data", imageModel);
+                    intent.putExtra("data", imageModel.getLargeImage());
                     finish();
                 }
             });

@@ -40,10 +40,10 @@ public class SosoSearcher implements SearcherConstructor {
             images = new NetImage[json2.length()];
             for (int i = 0; i <json2.length(); i++) {
                 images[i] = new NetImage(
-                        json2.getJSONObject(1).getString("thumbUrl"),
-                        json2.getJSONObject(1).getString("pic_url_noredirect"),
-                        json2.getJSONObject(1).getInt("thumb_width"),
-                        json2.getJSONObject(1).getInt("thumb_height"));
+                        json2.getJSONObject(i).getString("thumbUrl"),
+                        json2.getJSONObject(i).getString("pic_url_noredirect"),
+                        json2.getJSONObject(i).getInt("thumb_width"),
+                        json2.getJSONObject(i).getInt("thumb_height"));
             }
         } catch (JSONException e) {
         }

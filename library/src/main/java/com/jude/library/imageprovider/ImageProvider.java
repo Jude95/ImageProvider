@@ -2,21 +2,21 @@ package com.jude.library.imageprovider;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
-import com.jude.library.imageprovider.net.NetImage;
+
 import com.jude.library.imageprovider.net.NetImageSearchActivity;
+import com.jude.library.imageprovider.net.utils.ImageLoader;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by Mr.Jude on 2015/3/15.
  */
 public class ImageProvider {
-
-    private String tempImagePath ;
 
     private Activity act;
 
@@ -26,12 +26,14 @@ public class ImageProvider {
     private static final int REQUEST_ALBUM = 12581;
     private static final int REQUEST_NET = 12582;
 
-    public enum Searcher{
-        Baidu,SOSO,HuaBan
-    }
+    private File dir;
+    private File tempImage;
 
     public ImageProvider(Activity act){
         this.act = act;
+        Utils.initialize(act.getApplication(), "imageLog");
+        dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        dir.mkdir();
     }
 
     public void getImageFromAlbum(OnImageSelectListener mListener){
@@ -43,38 +45,59 @@ public class ImageProvider {
 
     public void getImageFromCamera(OnImageSelectListener mListener){
         this.mListener = mListener;
-        tempImagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/"+System.currentTimeMillis()+".jpg";
-        Intent cameraintent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraintent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(new File(tempImagePath)));
-        act.startActivityForResult(cameraintent, REQUEST_CAMERA);
-        Log.i("GodLog", mListener == null ? "bnull" : "bfuckvalue");
+        tempImage =  createTempImageFile();
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                Uri.fromFile(tempImage));
+        act.startActivityForResult(intent, REQUEST_CAMERA);
     }
 
-    public void getImageFromNet(Searcher Searcher,OnImageSelectListener mListener){
+    public void getImageFromNet(OnImageSelectListener mListener){
         this.mListener = mListener;
         Intent intent = new Intent(act,NetImageSearchActivity.class);
-        intent.putExtra(NetImageSearchActivity.Key_seacher, Searcher);
         act.startActivityForResult(intent, REQUEST_NET);
     }
 
     public void onActivityResult(int requestCode, int resultCode, final Intent data){
-        Log.i("GodLog",resultCode+"--"+(mListener==null?"null":"fuckvalue"));
         if (resultCode != act.RESULT_OK) return ;
         if (mListener == null) return;
-        Log.i("GodLog",requestCode+"");
         switch (requestCode){
             case REQUEST_CAMERA:
-                mListener.onImageSelect(Uri.fromFile(new File(tempImagePath)));
+                mListener.onImageSelect();
+                mListener.onImageLoaded(Uri.fromFile(tempImage));
                 break;
             case REQUEST_ALBUM:
-                mListener.onImageSelect(data.getData());
+                mListener.onImageSelect();
+                mListener.onImageLoaded(data.getData());
                 break;
             case REQUEST_NET:
-                final NetImage netImage = (NetImage) data.getSerializableExtra("data");
-                mListener.onImageSelect(null);
+                mListener.onImageSelect();
+                String url = data.getStringExtra("data");
+                ImageLoader.getInstance().image(url, new ImageLoader.ImageCallback() {
+                    @Override
+                    public void success(Bitmap bitmap) {
+                        File temp = createTempImageFile();
+                        Utils.BitmapSave(bitmap,temp.getPath());
+                        mListener.onImageLoaded(Uri.fromFile(temp));
+                    }
+
+                    @Override
+                    public void error() {
+                        mListener.onError();
+                    }
+                });
                 break;
         }
+    }
+
+    private File createTempImageFile(){
+        File file = new File(dir,System.currentTimeMillis()+"jpg");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 
 }

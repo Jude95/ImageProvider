@@ -43,7 +43,7 @@ public class ImageLoader {
                         callback.error();
                     }
                 }
-            });
+            }).start();
         }
     }
 
