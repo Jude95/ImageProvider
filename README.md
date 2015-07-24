@@ -3,7 +3,7 @@
 
 
 ##依赖
-`compile 'com.jude:imageprovider:1.0.0'`
+`compile 'com.jude:imageprovider:1.0.1'`
 
 ##用法
 `ImageProvider provider = new ImageProvider(this);`  
@@ -11,7 +11,8 @@
 `void getImageFromCamera(OnImageSelectListener mListener)`  
 `void getImageFromAlbum(OnImageSelectListener mListener)`  
 `void getImageFromNet(OnImageSelectListener mListener)`  
-
+图片裁剪，传入原始图片URI，输出宽高。  
+`void corpImage(Uri uri,int width,int height,OnImageSelectListener listener)`  
 OnImageSelectListener有3个回调。建议这样写:
 
     @Override
@@ -32,4 +33,4 @@ OnImageSelectListener有3个回调。建议这样写:
         dialog.dismiss();
     }
 
-onImageLoaded会回调一个Uri。相机与网络都是一个文件Uri。相册是系统数据库的Uri。
+onImageLoaded会回调一个Uri。相机与网络，裁剪都是一个文件Uri。相册是系统数据库的Uri。
