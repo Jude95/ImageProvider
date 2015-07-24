@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
+import com.jude.library.imageprovider.corpimage.CropImageIntentBuilder;
 import com.jude.library.imageprovider.net.NetImageSearchActivity;
 import com.jude.library.imageprovider.net.utils.ImageLoader;
 
@@ -25,6 +26,7 @@ public class ImageProvider {
     private static final int REQUEST_CAMERA = 12580;
     private static final int REQUEST_ALBUM = 12581;
     private static final int REQUEST_NET = 12582;
+    private static final int REQUEST_CORP = 12583;
 
     private File dir;
     private File tempImage;
@@ -95,7 +97,19 @@ public class ImageProvider {
                     }
                 });
                 break;
+            case REQUEST_CORP:
+                mListener.onImageSelect();
+                mListener.onImageLoaded(Uri.fromFile(tempImage));
+                break;
         }
+    }
+
+    public void corpImage(Uri uri,int width,int height,OnImageSelectListener listener){
+        this.mListener = listener;
+        tempImage = createTempImageFile();
+        CropImageIntentBuilder cropImage = new CropImageIntentBuilder(width, height,width, height, Uri.fromFile(tempImage));
+        cropImage.setSourceImage(uri);
+        act.startActivityForResult(cropImage.getIntent(act), REQUEST_CORP);
     }
 
     private File createTempImageFile(){

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,7 +63,24 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
     @Override
     public void onImageLoaded(Uri uri) {
         dialog.dismiss();
-        image.setImageURI(uri);
+
+        provider.corpImage(uri, 300, 300, new OnImageSelectListener() {
+            @Override
+            public void onImageSelect() {
+
+            }
+
+            @Override
+            public void onImageLoaded(Uri uric) {
+                Log.i("test",uric.toString());
+                image.setImageURI(uric);
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 
     @Override
