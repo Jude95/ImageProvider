@@ -11,7 +11,7 @@
 `void getImageFromCamera(OnImageSelectListener mListener)`  
 `void getImageFromAlbum(OnImageSelectListener mListener)`  
 `void getImageFromNet(OnImageSelectListener mListener)`  
-图片裁剪，传入原始图片URI，输出宽高。
+图片裁剪，传入原始图片URI，输出宽高。  
 `void corpImage(Uri uri,int width,int height,OnImageSelectListener listener)`  
 OnImageSelectListener有3个回调。建议这样写:
 
