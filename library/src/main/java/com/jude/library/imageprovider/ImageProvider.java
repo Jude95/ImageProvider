@@ -113,7 +113,7 @@ public class ImageProvider {
     }
 
     private File createTempImageFile(){
-        File file = new File(dir,System.currentTimeMillis()+"jpg");
+        File file = new File(dir,System.currentTimeMillis()+".jpg");
         try {
             file.createNewFile();
         } catch (IOException e) {
