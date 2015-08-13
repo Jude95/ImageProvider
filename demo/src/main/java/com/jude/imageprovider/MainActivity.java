@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
 
             @Override
             public void onImageLoaded(Uri uric) {
-                Log.i("test",uric.toString());
                 image.setImageURI(uric);
             }
 

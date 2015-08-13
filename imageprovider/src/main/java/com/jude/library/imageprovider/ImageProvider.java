@@ -78,7 +78,7 @@ public class ImageProvider {
                 break;
             case REQUEST_ALBUM:
                 mListener.onImageSelect();
-                mListener.onImageLoaded(data.getData());
+                mListener.onImageLoaded(Uri.parse(ImageUriUtils.getPath(act, data.getData())));
                 break;
             case REQUEST_NET:
                 mListener.onImageSelect();
@@ -87,7 +87,7 @@ public class ImageProvider {
                     @Override
                     public void success(Bitmap bitmap) {
                         File temp = createTempImageFile();
-                        Utils.BitmapSave(bitmap,temp.getPath());
+                        Utils.BitmapSave(bitmap, temp.getPath());
                         mListener.onImageLoaded(Uri.fromFile(temp));
                     }
 
@@ -122,4 +122,7 @@ public class ImageProvider {
         return file;
     }
 
+    public static Bitmap readImageWithSize(Uri uri, int outWidth, int outHeight){
+        return Utils.readBitmapAutoSize(uri.getPath(), outWidth, outHeight);
+    }
 }

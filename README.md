@@ -6,7 +6,15 @@
 `compile 'com.jude:imageprovider:1.0.4'`
 
 ##用法
-`ImageProvider provider = new ImageProvider(this);`  
+`ImageProvider provider = new ImageProvider(this);`
+在activity的onActivityResult中加入这句
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        provider.onActivityResult(requestCode, resultCode, data);
+    }
+
 然后调用这几个方法就行了，很简单。  
 `void getImageFromCamera(OnImageSelectListener mListener)`  
 `void getImageFromAlbum(OnImageSelectListener mListener)`  
@@ -33,4 +41,7 @@ OnImageSelectListener有3个回调。建议这样写:
         dialog.dismiss();
     }
 
-onImageLoaded会回调一个Uri。相机与网络，裁剪都是一个文件Uri。相册是系统数据库的Uri。
+onImageLoaded会回调一个文件Uri。
+注意有时你的相机与相册返回的图片过大。不能直接读取所返回的uri。可以使用
+`ImageProvider.readImageWithSize(uri,width,height);`以缩放大小加载图片。
+
