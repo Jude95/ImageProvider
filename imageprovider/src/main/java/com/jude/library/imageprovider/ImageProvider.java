@@ -78,7 +78,7 @@ public class ImageProvider {
                 break;
             case REQUEST_ALBUM:
                 mListener.onImageSelect();
-                mListener.onImageLoaded(Uri.parse(ImageUriUtils.getPath(act, data.getData())));
+                mListener.onImageLoaded(Uri.fromFile(new File(ImageUriUtils.getPath(act, data.getData()))));
                 break;
             case REQUEST_NET:
                 mListener.onImageSelect();
