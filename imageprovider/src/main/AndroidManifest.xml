@@ -7,6 +7,10 @@
         <activity android:name=".imageprovider.net.NetImageSearchActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity android:name=".imageprovider.corpimage.CropImage"></activity>
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:name=".imageprovider.album.MultiImageSelectorActivity" />
+
     </application>
 
 </manifest>

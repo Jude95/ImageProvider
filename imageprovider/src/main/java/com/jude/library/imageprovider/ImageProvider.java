@@ -7,12 +7,14 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
+import com.jude.library.imageprovider.album.MultiImageSelectorActivity;
 import com.jude.library.imageprovider.corpimage.CropImageIntentBuilder;
 import com.jude.library.imageprovider.net.NetImageSearchActivity;
 import com.jude.library.imageprovider.net.utils.ImageLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Mr.Jude on 2015/3/15.
@@ -48,8 +50,12 @@ public class ImageProvider {
 
     public void getImageFromAlbum(OnImageSelectListener mListener){
         this.mListener = mListener;
-        Intent intent = new Intent(Intent.ACTION_PICK, null);
-        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+//        Intent intent = new Intent(Intent.ACTION_PICK, null);
+//        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+
+        Intent intent = new Intent(act, MultiImageSelectorActivity.class);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE,MultiImageSelectorActivity.MODE_SINGLE);
         act.startActivityForResult(intent, REQUEST_ALBUM);
     }
 
@@ -78,7 +84,10 @@ public class ImageProvider {
                 break;
             case REQUEST_ALBUM:
                 mListener.onImageSelect();
-                mListener.onImageLoaded(Uri.parse(ImageUriUtils.getPath(act, data.getData())));
+                List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                for (String s : path) {
+                    mListener.onImageLoaded(Uri.parse(s));
+                }
                 break;
             case REQUEST_NET:
                 mListener.onImageSelect();
