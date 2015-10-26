@@ -55,7 +55,7 @@ public class ImageProvider {
 
         Intent intent = new Intent(act, MultiImageSelectorActivity.class);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
-        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE,MultiImageSelectorActivity.MODE_SINGLE);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_SINGLE);
         act.startActivityForResult(intent, REQUEST_ALBUM);
     }
 

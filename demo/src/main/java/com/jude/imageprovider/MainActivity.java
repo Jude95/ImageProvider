@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 
 import com.jude.library.imageprovider.ImageProvider;
 import com.jude.library.imageprovider.OnImageSelectListener;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements OnImageSelectListener{
 
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
     @Override
     public void onImageLoaded(Uri uri) {
         dialog.dismiss();
-
+        Log.i("Image",uri.getPath()+" File"+new File(uri.getPath()).exists());
         provider.corpImage(uri, 300, 300, new OnImageSelectListener() {
             @Override
             public void onImageSelect() {
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
             @Override
             public void onImageLoaded(Uri uric) {
                 image.setImageURI(uric);
+                Log.i("Image", uric.getPath()+" File"+new File(uric.getPath()).exists());
             }
 
             @Override
