@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ÎÄ¼ş¼ĞAdapter
+ * æ–‡ä»¶å¤¹Adapter
  * Created by Nereo on 2015/4/7.
  */
 public class FolderAdapter extends BaseAdapter {
@@ -38,7 +38,7 @@ public class FolderAdapter extends BaseAdapter {
     }
 
     /**
-     * ÉèÖÃÊı¾İ¼¯
+     * è®¾ç½®æ•°æ®é›†
      * @param folders
      */
     public void setData(List<Folder> folders) {
@@ -77,8 +77,8 @@ public class FolderAdapter extends BaseAdapter {
         }
         if (holder != null) {
             if(i == 0){
-                holder.name.setText("ËùÓĞÍ¼Æ¬");
-                holder.size.setText(getTotalImageSize()+"ÕÅ");
+                holder.name.setText("æ‰€æœ‰å›¾ç‰‡");
+                holder.size.setText(getTotalImageSize()+"å¼ ");
                 if(mFolders.size()>0){
                     Folder f = mFolders.get(0);
                     Picasso.with(mContext)
@@ -136,15 +136,15 @@ public class FolderAdapter extends BaseAdapter {
 
         void bindData(Folder data) {
             name.setText(data.name);
-            size.setText(data.images.size()+"ÕÅ");
-            // ÏÔÊ¾Í¼Æ¬
+            size.setText(data.images.size()+"å¼ ");
+            // æ˜¾ç¤ºå›¾ç‰‡
             Picasso.with(mContext)
                     .load(new File(data.cover.path))
                     .placeholder(R.drawable.default_error)
                     .resize(mImageSize, mImageSize)
                     .centerCrop()
                     .into(cover);
-            // TODO Ñ¡Ôñ±êÊ¶
+            // TODO é€‰æ‹©æ ‡è¯†
         }
     }
 

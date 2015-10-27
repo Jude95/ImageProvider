@@ -2,7 +2,6 @@ package com.jude.library.imageprovider.net;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -26,14 +25,12 @@ import com.jude.library.R;
 import com.jude.library.imageprovider.ImageProvider;
 import com.jude.library.imageprovider.Utils;
 import com.jude.library.imageprovider.net.searchers.SosoSearcher;
-import com.jude.library.imageprovider.net.utils.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class NetImageSearchActivity extends AppCompatActivity {
-
-    public static final String Key_seacher = "seacher";
 
     private RecyclerView recycleview;
     private ImageListAdapter adapter;
@@ -47,7 +44,6 @@ public class NetImageSearchActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment);
-        ImageLoader.getInstance().init(this);
         Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_return_black);
         setSupportActionBar(toolbar);
@@ -77,7 +73,9 @@ public class NetImageSearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchText = query;
-                getImageList(searchText,0);
+                getImageList(searchText, 0);
+                recycleview.scrollToPosition(0);
+                adapter.clear();
                 recycleview.setVisibility(View.VISIBLE);
                 mGridView.setVisibility(View.INVISIBLE);
                 return false;
@@ -111,11 +109,11 @@ public class NetImageSearchActivity extends AppCompatActivity {
                     });
                     return;
                 }
+
                 final NetImage[] images = seacher.getImageList(response);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (page == 0) adapter.clear();
                         adapter.addList(images);
                     }
                 });
@@ -149,37 +147,27 @@ public class NetImageSearchActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ImageViewHolder arg0, int arg1) {
-            int width = Utils.getScreenWidth()/2;
+
+
+
             if (arr.get(arg1).getHeight()!=0 && arr.get(arg1).getWidth()!=0){
+                int width = Utils.getScreenWidth()/2;
                 int height = width*arr.get(arg1).getHeight()/arr.get(arg1).getWidth();
                 arg0.img.setLayoutParams(new FrameLayout.LayoutParams(width,height));
-            }
-            arg0.img.setScaleType(ImageView.ScaleType.CENTER);
-            arg0.img.setImageResource(R.drawable.default_loading);
-            arg0.showed = false;
-            String url = arr.get(arg1).getSmallImage();
-            ImageLoader.getInstance().image(url, new ImageLoader.ImageCallback() {
-                @Override
-                public void success(Bitmap bitmap) {
-                    if (!arg0.showed) {
-                        arg0.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        arg0.img.setImageBitmap(bitmap);
-                        arg0.showed = true;
-                    }
-                }
 
-                @Override
-                public void error() {
-                    if (!arg0.showed) {
-                        arg0.img.setScaleType(ImageView.ScaleType.CENTER);
-                        arg0.img.setImageResource(R.drawable.default_error);
-                        arg0.showed = true;
-                    }
-                }
-            });
+                String url = arr.get(arg1).getSmallImage();
+                Picasso.with(NetImageSearchActivity.this)
+                        .load(url)
+                        .error(R.drawable.default_error)
+                        .resize(arr.get(arg1).getWidth(),arr.get(arg1).getHeight())
+                        .into(arg0.img);
+            }
+
+
+
 
             //加载下一页
-            if(arg1==arr.size()-1){
+            if(arg1==arr.size()-3){
                 getImageList(searchText,page+1);
             }
             arg0.imageModel = arr.get(arg1);
@@ -201,7 +189,6 @@ public class NetImageSearchActivity extends AppCompatActivity {
     class ImageViewHolder extends RecyclerView.ViewHolder{
         public NetImage imageModel;
         public ImageView img;
-        public boolean showed;
 
         public ImageViewHolder(View itemView) {
             super(itemView);

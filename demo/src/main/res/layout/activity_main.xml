@@ -8,36 +8,16 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/image"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/camera"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="Camera"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_height="match_parent" />
-        <Button
-            android:id="@+id/album"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="Album"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_height="match_parent" />
-        <Button
-            android:id="@+id/net"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="Net"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+        android:layout_height="wrap_content">
+
+        <com.jude.exgridview.PieceViewGroup
+            android:id="@+id/piece"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </ScrollView>
+
+
 </LinearLayout>

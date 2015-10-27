@@ -6,14 +6,15 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.jude.library.imageprovider.album.MultiImageSelectorActivity;
 import com.jude.library.imageprovider.corpimage.CropImageIntentBuilder;
+import com.jude.library.imageprovider.net.Downloader;
 import com.jude.library.imageprovider.net.NetImageSearchActivity;
-import com.jude.library.imageprovider.net.utils.ImageLoader;
+import com.jude.library.imageprovider.utils.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -27,8 +28,9 @@ public class ImageProvider {
 
     private static final int REQUEST_CAMERA = 12580;
     private static final int REQUEST_ALBUM = 12581;
-    private static final int REQUEST_NET = 12582;
-    private static final int REQUEST_CORP = 12583;
+    private static final int REQUEST_ALBUM_MULTI = 12582;
+    private static final int REQUEST_NET = 12583;
+    private static final int REQUEST_CORP = 12585;
 
     private File dir;
     private File tempImage;
@@ -48,11 +50,17 @@ public class ImageProvider {
         dir.mkdir();
     }
 
+    public void getImageFromAlbum(OnImageSelectListener mListener,int maxCount){
+        this.mListener = mListener;
+        Intent intent = new Intent(act, MultiImageSelectorActivity.class);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxCount);
+        act.startActivityForResult(intent, REQUEST_ALBUM);
+    }
+
     public void getImageFromAlbum(OnImageSelectListener mListener){
         this.mListener = mListener;
-//        Intent intent = new Intent(Intent.ACTION_PICK, null);
-//        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-
         Intent intent = new Intent(act, MultiImageSelectorActivity.class);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_SINGLE);
@@ -61,7 +69,7 @@ public class ImageProvider {
 
     public void getImageFromCamera(OnImageSelectListener mListener){
         this.mListener = mListener;
-        tempImage =  createTempImageFile();
+        tempImage =  FileUtils.createTmpFile(act);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                 Uri.fromFile(tempImage));
@@ -86,22 +94,24 @@ public class ImageProvider {
                 mListener.onImageSelect();
                 List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
                 for (String s : path) {
-                    mListener.onImageLoaded(Uri.parse(s));
+                    mListener.onImageLoaded(Uri.fromFile(new File(s)));
                 }
                 break;
             case REQUEST_NET:
                 mListener.onImageSelect();
+                Log.i("ImageProvider", "Begin Download");
                 String url = data.getStringExtra("data");
-                ImageLoader.getInstance().image(url, new ImageLoader.ImageCallback() {
+                final File temp = FileUtils.createTmpFile(act);
+                Downloader.download(url, temp, new Downloader.Callback() {
                     @Override
-                    public void success(Bitmap bitmap) {
-                        File temp = createTempImageFile();
-                        Utils.BitmapSave(bitmap, temp.getPath());
+                    public void success() {
+                        Log.i("ImageProvider", "success");
                         mListener.onImageLoaded(Uri.fromFile(temp));
                     }
 
                     @Override
                     public void error() {
+                        Log.i("ImageProvider", "error");
                         mListener.onError();
                     }
                 });
@@ -115,21 +125,12 @@ public class ImageProvider {
 
     public void corpImage(Uri uri,int width,int height,OnImageSelectListener listener){
         this.mListener = listener;
-        tempImage = createTempImageFile();
+        tempImage = FileUtils.createTmpFile(act);
         CropImageIntentBuilder cropImage = new CropImageIntentBuilder(width, height,width, height, Uri.fromFile(tempImage));
         cropImage.setSourceImage(uri);
         act.startActivityForResult(cropImage.getIntent(act), REQUEST_CORP);
     }
 
-    private File createTempImageFile(){
-        File file = new File(dir,System.currentTimeMillis()+".jpg");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
 
     public static Bitmap readImageWithSize(Uri uri, int outWidth, int outHeight){
         return Utils.readBitmapAutoSize(uri.getPath(), outWidth, outHeight);

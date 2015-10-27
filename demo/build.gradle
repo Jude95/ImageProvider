@@ -17,10 +17,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.0.1'
     compile project(':imageprovider')
+
+    compile 'com.jude:exgridview:1.1.4'
+    compile('com.afollestad.material-dialogs:core:0.8.4.2@aar') {
+        transitive = true
+    }
+}
+
+repositories {
+    maven { url "https://jitpack.io" }
 }

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Í¼Æ¬Adapter
+ * å›¾ç‰‡Adapter
  * Created by Nereo on 2015/4/7.
  */
 public class ImageGridAdapter extends BaseAdapter {
@@ -44,7 +44,7 @@ public class ImageGridAdapter extends BaseAdapter {
         mItemLayoutParams = new GridView.LayoutParams(GridView.LayoutParams.MATCH_PARENT, GridView.LayoutParams.MATCH_PARENT);
     }
     /**
-     * ÏÔÊ¾Ñ¡ÔñÖ¸Ê¾Æ÷
+     * æ˜¾ç¤ºé€‰æ‹©æŒ‡ç¤ºå™¨
      * @param b
      */
     public void showSelectIndicator(boolean b) {
@@ -63,7 +63,7 @@ public class ImageGridAdapter extends BaseAdapter {
     }
 
     /**
-     * Ñ¡ÔñÄ³¸öÍ¼Æ¬£¬¸Ä±äÑ¡Ôñ×´Ì¬
+     * é€‰æ‹©æŸä¸ªå›¾ç‰‡ï¼Œæ”¹å˜é€‰æ‹©çŠ¶æ€
      * @param image
      */
     public void select(Image image) {
@@ -76,7 +76,7 @@ public class ImageGridAdapter extends BaseAdapter {
     }
 
     /**
-     * Í¨¹ıÍ¼Æ¬Â·¾¶ÉèÖÃÄ¬ÈÏÑ¡Ôñ
+     * é€šè¿‡å›¾ç‰‡è·¯å¾„è®¾ç½®é»˜è®¤é€‰æ‹©
      * @param resultList
      */
     public void setDefaultSelected(ArrayList<String> resultList) {
@@ -103,7 +103,7 @@ public class ImageGridAdapter extends BaseAdapter {
     }
 
     /**
-     * ÉèÖÃÊı¾İ¼¯
+     * è®¾ç½®æ•°æ®é›†
      * @param images
      */
     public void setData(List<Image> images) {
@@ -118,7 +118,7 @@ public class ImageGridAdapter extends BaseAdapter {
     }
 
     /**
-     * ÖØÖÃÃ¿¸öColumnµÄSize
+     * é‡ç½®æ¯ä¸ªColumnçš„Size
      * @param columnWidth
      */
     public void setItemSize(int columnWidth) {
@@ -216,15 +216,15 @@ public class ImageGridAdapter extends BaseAdapter {
 
         void bindData(final Image data){
             if(data == null) return;
-            // ´¦Àíµ¥Ñ¡ºÍ¶àÑ¡×´Ì¬
+            // å¤„ç†å•é€‰å’Œå¤šé€‰çŠ¶æ€
             if(showSelectIndicator){
                 indicator.setVisibility(View.VISIBLE);
                 if(mSelectedImages.contains(data)){
-                    // ÉèÖÃÑ¡ÖĞ×´Ì¬
+                    // è®¾ç½®é€‰ä¸­çŠ¶æ€
                     indicator.setImageResource(R.drawable.btn_selected);
                     mask.setVisibility(View.VISIBLE);
                 }else{
-                    // Î´Ñ¡Ôñ
+                    // æœªé€‰æ‹©
                     indicator.setImageResource(R.drawable.btn_unselected);
                     mask.setVisibility(View.GONE);
                 }
@@ -234,7 +234,7 @@ public class ImageGridAdapter extends BaseAdapter {
             File imageFile = new File(data.path);
 
             if(mItemSize > 0) {
-                // ÏÔÊ¾Í¼Æ¬
+                // æ˜¾ç¤ºå›¾ç‰‡
                 Picasso.with(mContext)
                         .load(imageFile)
                         .placeholder(R.drawable.default_error)
