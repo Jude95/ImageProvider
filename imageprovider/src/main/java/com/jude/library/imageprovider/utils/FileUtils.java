@@ -17,6 +17,7 @@ public class FileUtils {
     public static File createTmpFile(Context context){
 
         String state = Environment.getExternalStorageState();
+
         if(state.equals(Environment.MEDIA_MOUNTED)){
             // 已挂载
             File pic = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
