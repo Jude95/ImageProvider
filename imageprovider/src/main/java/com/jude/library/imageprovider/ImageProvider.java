@@ -28,7 +28,6 @@ public class ImageProvider {
 
     private static final int REQUEST_CAMERA = 12580;
     private static final int REQUEST_ALBUM = 12581;
-    private static final int REQUEST_ALBUM_MULTI = 12582;
     private static final int REQUEST_NET = 12583;
     private static final int REQUEST_CORP = 12585;
 
@@ -76,6 +75,14 @@ public class ImageProvider {
         act.startActivityForResult(intent, REQUEST_CAMERA);
     }
 
+    public void getImageFromCameraOrAlbum(OnImageSelectListener mListener){
+        this.mListener = mListener;
+        Intent intent = new Intent(act, MultiImageSelectorActivity.class);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_SINGLE);
+        act.startActivityForResult(intent, REQUEST_ALBUM);
+    }
+
     public void getImageFromNet(OnImageSelectListener mListener){
         this.mListener = mListener;
         Intent intent = new Intent(act,NetImageSearchActivity.class);
@@ -120,6 +127,7 @@ public class ImageProvider {
                 mListener.onImageSelect();
                 mListener.onImageLoaded(Uri.fromFile(tempImage));
                 break;
+
         }
     }
 
@@ -130,7 +138,6 @@ public class ImageProvider {
         cropImage.setSourceImage(uri);
         act.startActivityForResult(cropImage.getIntent(act), REQUEST_CORP);
     }
-
 
     public static Bitmap readImageWithSize(Uri uri, int outWidth, int outHeight){
         return Utils.readBitmapAutoSize(uri.getPath(), outWidth, outHeight);

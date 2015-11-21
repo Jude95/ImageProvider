@@ -1,8 +1,12 @@
 package com.jude.imageprovider;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -41,9 +45,12 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
 
 
     public void showSelectDialog(){
+        if (!requestPermission()){
+            return;
+        }
         new MaterialDialog.Builder(MainActivity.this)
                 .title("选择图片来源")
-                .items(new String[]{"相机","相册","相册(多张)","网络","裁剪"})
+                .items(new String[]{"相机","相机+相册","相册","相册(多张)","网络","裁剪"})
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
@@ -52,15 +59,18 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
                                 provider.getImageFromCamera(MainActivity.this);
                                 break;
                             case 1:
-                                provider.getImageFromAlbum(MainActivity.this);
+                                provider.getImageFromCameraOrAlbum(MainActivity.this);
                                 break;
                             case 2:
-                                provider.getImageFromAlbum(MainActivity.this, 9);
+                                provider.getImageFromAlbum(MainActivity.this);
                                 break;
                             case 3:
-                                provider.getImageFromNet(MainActivity.this);
+                                provider.getImageFromAlbum(MainActivity.this, 9);
                                 break;
                             case 4:
+                                provider.getImageFromNet(MainActivity.this);
+                                break;
+                            case 5:
                                 //裁剪，用相册的图片做例子。
                                 provider.getImageFromAlbum(new OnImageSelectListener() {
                                     @Override
@@ -166,6 +176,45 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
         provider.onActivityResult(requestCode, resultCode, data);
     }
 
+    public static final int EXTERNAL_STORAGE_REQ_CODE = 10 ;
 
+    public boolean requestPermission(){
+        //判断当前Activity是否已经获得了该权限
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            //如果App的权限申请曾经被用户拒绝过，就需要在这里跟用户做出解释
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Toast.makeText(this,"please give me the permission",Toast.LENGTH_SHORT).show();
+            } else {
+                //进行权限请求
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        EXTERNAL_STORAGE_REQ_CODE);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case EXTERNAL_STORAGE_REQ_CODE: {
+                // 如果请求被拒绝，那么通常grantResults数组为空
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //申请成功，进行相应操作
+                    showSelectDialog();
+                } else {
+                    //申请失败，可以继续向用户解释。
+                }
+                return;
+            }
+        }
+    }
 
 }
