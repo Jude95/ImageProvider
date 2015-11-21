@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
         }
         new MaterialDialog.Builder(MainActivity.this)
                 .title("选择图片来源")
-                .items(new String[]{"相机","相机+相册","相册","相册(多张)","网络","裁剪"})
+                .items(new String[]{"相机","相机+相册","相册","相册(多张)","相机+相册(多张)","网络","裁剪"})
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
@@ -68,9 +68,12 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
                                 provider.getImageFromAlbum(MainActivity.this, 9);
                                 break;
                             case 4:
-                                provider.getImageFromNet(MainActivity.this);
+                                provider.getImageFromCameraOrAlbum(MainActivity.this,9);
                                 break;
                             case 5:
+                                provider.getImageFromNet(MainActivity.this);
+                                break;
+                            case 6:
                                 //裁剪，用相册的图片做例子。
                                 provider.getImageFromAlbum(new OnImageSelectListener() {
                                     @Override

@@ -3,7 +3,7 @@
 
 
 ##依赖
-`compile 'com.jude:imageprovider:2.0.4'`
+`compile 'com.jude:imageprovider:2.0.5'`
 
 ##用法
 `ImageProvider provider = new ImageProvider(this);`
@@ -20,6 +20,7 @@
 `void getImageFromAlbum(OnImageSelectListener mListener)`
 `void getImageFromAlbum(OnImageSelectListener mListener,int maxCount)`
 `void getImageFromCameraOrAlbum(OnImageSelectListener mListener)`
+`void getImageFromCameraOrAlbum(OnImageSelectListener mListener,int maxCount)`  
 `void getImageFromNet(OnImageSelectListener mListener)`  
 图片裁剪，传入原始图片URI，输出宽高。  
 `void corpImage(Uri uri,int width,int height,OnImageSelectListener listener)`  

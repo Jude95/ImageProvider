@@ -83,6 +83,15 @@ public class ImageProvider {
         act.startActivityForResult(intent, REQUEST_ALBUM);
     }
 
+    public void getImageFromCameraOrAlbum(OnImageSelectListener mListener,int maxCount){
+        this.mListener = mListener;
+        Intent intent = new Intent(act, MultiImageSelectorActivity.class);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxCount);
+        act.startActivityForResult(intent, REQUEST_ALBUM);
+    }
+
     public void getImageFromNet(OnImageSelectListener mListener){
         this.mListener = mListener;
         Intent intent = new Intent(act,NetImageSearchActivity.class);
