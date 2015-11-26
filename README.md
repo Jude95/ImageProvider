@@ -7,7 +7,7 @@
 
 ##用法
 `ImageProvider provider = new ImageProvider(this);`
-在activity的onActivityResult中加入这句
+在activity或fragment的onActivityResult中加入这句
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
