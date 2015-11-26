@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.jude.library.imageprovider.album.MultiImageSelectorActivity;
@@ -23,6 +24,7 @@ import java.util.List;
 public class ImageProvider {
 
     private Activity act;
+    private Fragment mFragment;
 
     private OnImageSelectListener mListener;
 
@@ -49,13 +51,24 @@ public class ImageProvider {
         dir.mkdir();
     }
 
+    public ImageProvider(Fragment fragment){
+        this.mFragment = fragment;
+        Utils.initialize(act.getApplication(), "imageLog");
+        dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        dir.mkdir();
+    }
+
     public void getImageFromAlbum(OnImageSelectListener mListener,int maxCount){
         this.mListener = mListener;
         Intent intent = new Intent(act, MultiImageSelectorActivity.class);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxCount);
-        act.startActivityForResult(intent, REQUEST_ALBUM);
+        if (act == null) {
+            mFragment.startActivityForResult(intent, REQUEST_ALBUM);
+        }else{
+            act.startActivityForResult(intent, REQUEST_ALBUM);
+        }
     }
 
     public void getImageFromAlbum(OnImageSelectListener mListener){
@@ -63,7 +76,11 @@ public class ImageProvider {
         Intent intent = new Intent(act, MultiImageSelectorActivity.class);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_SINGLE);
-        act.startActivityForResult(intent, REQUEST_ALBUM);
+        if (act == null) {
+            mFragment.startActivityForResult(intent, REQUEST_ALBUM);
+        }else{
+            act.startActivityForResult(intent, REQUEST_ALBUM);
+        }
     }
 
     public void getImageFromCamera(OnImageSelectListener mListener){
@@ -72,7 +89,11 @@ public class ImageProvider {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                 Uri.fromFile(tempImage));
-        act.startActivityForResult(intent, REQUEST_CAMERA);
+        if (act == null) {
+            mFragment.startActivityForResult(intent, REQUEST_CAMERA);
+        }else{
+            act.startActivityForResult(intent, REQUEST_CAMERA);
+        }
     }
 
     public void getImageFromCameraOrAlbum(OnImageSelectListener mListener){
@@ -95,7 +116,12 @@ public class ImageProvider {
     public void getImageFromNet(OnImageSelectListener mListener){
         this.mListener = mListener;
         Intent intent = new Intent(act,NetImageSearchActivity.class);
-        act.startActivityForResult(intent, REQUEST_NET);
+        if (act == null) {
+            mFragment.startActivityForResult(intent, REQUEST_NET);
+        }else{
+            act.startActivityForResult(intent, REQUEST_NET);
+
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, final Intent data){
