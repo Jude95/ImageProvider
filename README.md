@@ -3,7 +3,7 @@
 
 
 ##依赖
-`compile 'com.jude:imageprovider:2.0.5'`
+`compile 'com.jude:imageprovider:2.0.6'`
 
 ##用法
 `ImageProvider provider = new ImageProvider(this);`

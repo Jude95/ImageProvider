@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         minSdkVersion 14
@@ -39,7 +39,7 @@ ext {
     siteUrl = 'https://github.com/Jude95/ImageProvider'
     gitUrl = 'https://github.com/Jude95/ImageProvider'
 
-    libraryVersion = '2.0.5'//版本号
+    libraryVersion = '2.0.6'//版本号
     libraryName = 'imageprovider'//项目名字，没什么用
     libraryDescription = 'A tool for Android'//项目描述，没什么用
 

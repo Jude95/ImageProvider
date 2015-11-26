@@ -64,11 +64,7 @@ public class ImageProvider {
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxCount);
-        if (act == null) {
-            mFragment.startActivityForResult(intent, REQUEST_ALBUM);
-        }else{
-            act.startActivityForResult(intent, REQUEST_ALBUM);
-        }
+        startActivityForResult(intent, REQUEST_ALBUM);
     }
 
     public void getImageFromAlbum(OnImageSelectListener mListener){
@@ -76,11 +72,7 @@ public class ImageProvider {
         Intent intent = new Intent(act, MultiImageSelectorActivity.class);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_SINGLE);
-        if (act == null) {
-            mFragment.startActivityForResult(intent, REQUEST_ALBUM);
-        }else{
-            act.startActivityForResult(intent, REQUEST_ALBUM);
-        }
+        startActivityForResult(intent, REQUEST_ALBUM);
     }
 
     public void getImageFromCamera(OnImageSelectListener mListener){
@@ -89,11 +81,7 @@ public class ImageProvider {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                 Uri.fromFile(tempImage));
-        if (act == null) {
-            mFragment.startActivityForResult(intent, REQUEST_CAMERA);
-        }else{
-            act.startActivityForResult(intent, REQUEST_CAMERA);
-        }
+       startActivityForResult(intent, REQUEST_CAMERA);
     }
 
     public void getImageFromCameraOrAlbum(OnImageSelectListener mListener){
@@ -101,7 +89,7 @@ public class ImageProvider {
         Intent intent = new Intent(act, MultiImageSelectorActivity.class);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_SINGLE);
-        act.startActivityForResult(intent, REQUEST_ALBUM);
+        startActivityForResult(intent, REQUEST_ALBUM);
     }
 
     public void getImageFromCameraOrAlbum(OnImageSelectListener mListener,int maxCount){
@@ -110,19 +98,23 @@ public class ImageProvider {
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxCount);
-        act.startActivityForResult(intent, REQUEST_ALBUM);
+        startActivityForResult(intent, REQUEST_ALBUM);
     }
 
     public void getImageFromNet(OnImageSelectListener mListener){
         this.mListener = mListener;
         Intent intent = new Intent(act,NetImageSearchActivity.class);
-        if (act == null) {
-            mFragment.startActivityForResult(intent, REQUEST_NET);
-        }else{
-            act.startActivityForResult(intent, REQUEST_NET);
+        startActivityForResult(intent,REQUEST_NET);
+    }
 
+    private void startActivityForResult(Intent intent,int requestCode){
+        if (act == null) {
+            mFragment.startActivityForResult(intent, requestCode);
+        }else{
+            act.startActivityForResult(intent, requestCode);
         }
     }
+
 
     public void onActivityResult(int requestCode, int resultCode, final Intent data){
         if (resultCode != act.RESULT_OK) return ;
@@ -171,7 +163,10 @@ public class ImageProvider {
         tempImage = FileUtils.createTmpFile(act);
         CropImageIntentBuilder cropImage = new CropImageIntentBuilder(width, height,width, height, Uri.fromFile(tempImage));
         cropImage.setSourceImage(uri);
-        act.startActivityForResult(cropImage.getIntent(act), REQUEST_CORP);
+        Intent i;
+        if (act!=null)i = cropImage.getIntent(act);
+        else i = cropImage.getIntent(mFragment.getContext());
+        startActivityForResult(i, REQUEST_CORP);
     }
 
     public static Bitmap readImageWithSize(Uri uri, int outWidth, int outHeight){

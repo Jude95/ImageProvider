@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -94,12 +95,16 @@ public class NetImageSearchActivity extends AppCompatActivity {
 
 
     private void getImageList(final String word, final int page){
+        Log.i("Image","get");
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String response = null;
                 try {
+                    Log.i("Image","BEGIN");
                     response = Utils.sendGet(seacher.getUrl(word, page), "");
+                    Log.i("Image",response);
                 } catch (Exception e) {
                     runOnUiThread(new Runnable() {
                         @Override
