@@ -1,6 +1,8 @@
 package com.jude.library.imageprovider.album.adapter;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +11,9 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.jude.library.R;
+import com.jude.library.imageprovider.Utils;
 import com.jude.library.imageprovider.album.bean.Image;
+import com.jude.library.imageprovider.corpimage.Util;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -233,13 +237,19 @@ public class ImageGridAdapter extends BaseAdapter {
             }
             File imageFile = new File(data.path);
 
+            Log.i("IMAGE","mItemSize"+mItemSize+"   data.path:"+data.path);
             if(mItemSize > 0) {
                 // 显示图片
-                Picasso.with(mContext)
-                        .load(imageFile)
-                        .placeholder(R.drawable.default_error)
-                                //.error(R.drawable.default_error)
-                        .resize(mItemSize, mItemSize)
+//                image.setImageBitmap(Utils.readBitmapAutoSize(data.path,150,150));
+                new Picasso.Builder(mContext).listener(new Picasso.Listener() {
+                    @Override
+                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                        exception.printStackTrace();
+                    }
+                }).build().load(imageFile)
+                        .placeholder(R.drawable.default_loading)
+                        .error(R.drawable.default_error)
+                        .fit()
                         .centerCrop()
                         .into(image);
             }
