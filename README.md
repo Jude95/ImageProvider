@@ -1,6 +1,6 @@
 # ImageProvider
 图片提供者,从系统，相册，网络提供图片。
-
+相册选择部分使用了[MultiImageSelector](https://github.com/lovetuzitong/MultiImageSelector)
 
 ##依赖
 `compile 'com.jude:imageprovider:2.0.8'`
