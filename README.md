@@ -3,7 +3,7 @@
 相册选择部分使用了[MultiImageSelector](https://github.com/lovetuzitong/MultiImageSelector)
 
 ##依赖
-`compile 'com.jude:imageprovider:2.0.8'`
+`compile 'com.jude:imageprovider:2.1.1'`
 
 ##用法
 `ImageProvider provider = new ImageProvider(this);`

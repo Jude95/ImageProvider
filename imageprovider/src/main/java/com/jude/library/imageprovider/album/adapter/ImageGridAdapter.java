@@ -8,9 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.jude.library.R;
 import com.jude.library.imageprovider.album.bean.Image;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -237,11 +237,11 @@ public class ImageGridAdapter extends BaseAdapter {
             if(mItemSize > 0) {
                 // 显示图片
 //                image.setImageBitmap(Utils.readBitmapAutoSize(data.path,150,150));
-                Picasso.with(mContext)
+                Glide.with(mContext)
                         .load(imageFile)
                         .placeholder(R.drawable.default_error)
                         //.error(R.drawable.default_error)
-                        .resize(mItemSize, mItemSize)
+                        .override(mItemSize, mItemSize)
                         .centerCrop()
                         .into(image);
             }

@@ -37,7 +37,6 @@ import com.jude.library.imageprovider.album.bean.Folder;
 import com.jude.library.imageprovider.album.bean.Image;
 import com.jude.library.imageprovider.utils.FileUtils;
 import com.jude.library.imageprovider.utils.TimeUtils;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -186,13 +185,6 @@ public class MultiImageSelectorFragment extends Fragment {
         mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int state) {
-
-                final Picasso picasso = Picasso.with(getActivity());
-                if(state == SCROLL_STATE_IDLE || state == SCROLL_STATE_TOUCH_SCROLL){
-                    picasso.resumeTag(getActivity());
-                }else{
-                    picasso.pauseTag(getActivity());
-                }
 
                 if(state == SCROLL_STATE_IDLE){
                     // 停止滑动，日期指示器消失

@@ -22,11 +22,11 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.jude.library.R;
 import com.jude.library.imageprovider.ImageProvider;
 import com.jude.library.imageprovider.Utils;
 import com.jude.library.imageprovider.net.searchers.SosoSearcher;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -161,15 +161,12 @@ public class NetImageSearchActivity extends AppCompatActivity {
                 arg0.img.setLayoutParams(new FrameLayout.LayoutParams(width,height));
 
                 String url = arr.get(arg1).getSmallImage();
-                Picasso.with(NetImageSearchActivity.this)
+                Glide.with(NetImageSearchActivity.this)
                         .load(url)
                         .error(R.drawable.default_error)
-                        .resize(arr.get(arg1).getWidth(),arr.get(arg1).getHeight())
+                        .override(arr.get(arg1).getWidth(),arr.get(arg1).getHeight())
                         .into(arg0.img);
             }
-
-
-
 
             //加载下一页
             if(arg1==arr.size()-3){

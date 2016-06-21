@@ -2,10 +2,10 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 9
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -25,9 +25,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:recyclerview-v7:23.1.1'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.github.bumptech.glide:glide:3.6.1'
 }
 ext {
     bintrayRepo = 'maven'////bintray上的仓库名，一般为maven
@@ -39,7 +39,7 @@ ext {
     siteUrl = 'https://github.com/Jude95/ImageProvider'
     gitUrl = 'https://github.com/Jude95/ImageProvider'
 
-    libraryVersion = '2.0.8'//版本号
+    libraryVersion = '2.1.1'//版本号
     libraryName = 'imageprovider'//项目名字，没什么用
     libraryDescription = 'A tool for Android'//项目描述，没什么用
 
