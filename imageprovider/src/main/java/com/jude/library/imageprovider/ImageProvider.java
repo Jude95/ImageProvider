@@ -59,6 +59,7 @@ public class ImageProvider {
 
     public ImageProvider(Fragment fragment){
         this.mFragment = fragment;
+        act = fragment.getActivity();
         Utils.initialize(act.getApplication(), "imageLog");
         dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         dir.mkdir();
@@ -114,7 +115,7 @@ public class ImageProvider {
     }
 
     private void startActivityForResult(Intent intent,int requestCode){
-        if (act == null) {
+        if (mFragment != null) {
             mFragment.startActivityForResult(intent, requestCode);
         }else{
             act.startActivityForResult(intent, requestCode);
