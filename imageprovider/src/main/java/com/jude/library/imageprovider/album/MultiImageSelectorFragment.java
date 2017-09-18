@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.ListPopupWindow;
 import android.util.Log;
@@ -387,7 +388,8 @@ public class MultiImageSelectorFragment extends Fragment {
             // 设置系统相机拍照后的输出路径
             // 创建临时文件
             mTmpFile = FileUtils.createTmpFile(getActivity());
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTmpFile));
+            Uri uri = FileProvider.getUriForFile(getContext(),getContext().getPackageName()+".fileProvider",mTmpFile);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             startActivityForResult(cameraIntent, REQUEST_CAMERA);
         }else{
             Toast.makeText(getActivity(), R.string.msg_no_camera, Toast.LENGTH_SHORT).show();

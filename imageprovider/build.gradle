@@ -35,7 +35,7 @@ ext {
     package_type = 'aar'  // 输出类型
     package_group = 'com.jude' // JCenter的GroupId
     package_artifact = 'imageprovider' // JCenter的ArtifactId
-    package_version = '3.0.0-alpha4'  // JCenter的VersionId
+    package_version = '3.0.0-alpha5'  // JCenter的VersionId
     package_description = 'A tool for Android'
 
     // 以下选填
