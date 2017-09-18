@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2007 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,44 +14,49 @@
 -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@android:color/black">
 
     <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <view
+            android:id="@+id/image"
+            class="com.jude.library.imageprovider.corpimage.CropImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_x="0dip"
+            android:layout_y="0dip"
+            android:background="#55000000" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="8dp"
             android:orientation="horizontal">
 
-        <view class="com.jude.library.imageprovider.corpimage.CropImageView" android:id="@+id/image"
-                android:background="#55000000"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_x="0dip"
-                android:layout_y="0dip"
-        />
-        <RelativeLayout android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/save"
+                android:layout_width="100dip"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-            android:layout_margin="8dp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true">
+                android:layout_alignParentRight="true"
+                android:text="保存"
+                android:backgroundTint="#555"
+                android:textColor="@android:color/white" />
+
             <Button
-                    android:id="@+id/save"
-                    android:layout_width="100dip"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="保存"
-                android:textColor="@android:color/white"
-            />
-            <Button
-                    android:id="@+id/discard"
-                    android:layout_width="100dip"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:text="取消"
-                android:textColor="@android:color/white"
-            />
+                android:id="@+id/discard"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="取消"
+                android:backgroundTint="#555"
+                android:textColor="@android:color/white" />
         </RelativeLayout>
     </RelativeLayout>
 

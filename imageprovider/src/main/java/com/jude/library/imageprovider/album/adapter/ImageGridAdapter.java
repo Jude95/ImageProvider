@@ -8,11 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.jude.library.R;
 import com.jude.library.imageprovider.album.bean.Image;
+import com.jude.library.imageprovider.utils.ImageLoader;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,15 +176,15 @@ public class ImageGridAdapter extends BaseAdapter {
             view = mInflater.inflate(R.layout.list_item_camera, viewGroup, false);
             view.setTag(null);
         }else if(type == TYPE_NORMAL){
-            ViewHolde holde;
+            ViewHolder holde;
             if(view == null){
                 view = mInflater.inflate(R.layout.list_item_image, viewGroup, false);
-                holde = new ViewHolde(view);
+                holde = new ViewHolder(view);
             }else{
-                holde = (ViewHolde) view.getTag();
+                holde = (ViewHolder) view.getTag();
                 if(holde == null){
                     view = mInflater.inflate(R.layout.list_item_image, viewGroup, false);
-                    holde = new ViewHolde(view);
+                    holde = new ViewHolder(view);
                 }
             }
             if(holde != null) {
@@ -202,12 +201,12 @@ public class ImageGridAdapter extends BaseAdapter {
         return view;
     }
 
-    class ViewHolde {
+    class ViewHolder {
         ImageView image;
         ImageView indicator;
         View mask;
 
-        ViewHolde(View view){
+        ViewHolder(View view){
             image = (ImageView) view.findViewById(R.id.image);
             indicator = (ImageView) view.findViewById(R.id.checkmark);
             mask = view.findViewById(R.id.mask);
@@ -231,18 +230,11 @@ public class ImageGridAdapter extends BaseAdapter {
             }else{
                 indicator.setVisibility(View.GONE);
             }
-            File imageFile = new File(data.path);
-
-            //Log.i("IMAGE","mItemSize"+mItemSize+"   data.path:"+data.path);
+            image.setImageResource(R.drawable.default_loading);
             if(mItemSize > 0) {
                 // 显示图片
-//                image.setImageBitmap(Utils.readBitmapAutoSize(data.path,150,150));
-                Glide.with(mContext)
-                        .load(imageFile)
-                        .placeholder(R.drawable.default_error)
-                        //.error(R.drawable.default_error)
-                        .override(mItemSize, mItemSize)
-                        .centerCrop()
+                ImageLoader.load(data.path)
+                        .size(150, 150)
                         .into(image);
             }
         }

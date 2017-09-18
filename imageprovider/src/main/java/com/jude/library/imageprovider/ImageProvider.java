@@ -1,65 +1,48 @@
 package com.jude.library.imageprovider;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.content.FileProvider;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.jude.library.imageprovider.album.MultiImageSelectorActivity;
 import com.jude.library.imageprovider.corpimage.CropImageIntentBuilder;
-import com.jude.library.imageprovider.net.NetImageSearchActivity;
 import com.jude.library.imageprovider.utils.FileUtils;
+import com.jude.library.imageprovider.utils.Utils;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 /**
  * Created by Mr.Jude on 2015/3/15.
  */
-public class ImageProvider {
+public class ImageProvider{
 
     private Activity act;
-    private Fragment mFragment;
 
     private OnImageSelectListener mListener;
 
     private static final int REQUEST_CAMERA = 12580;
     private static final int REQUEST_ALBUM = 12581;
-    private static final int REQUEST_NET = 12583;
     private static final int REQUEST_CORP = 12585;
 
     private File dir;
     private File tempImage;
 
-    public static String[] mRecommendList = {
-            "拥抱","梦幻","爱情","唯美","汪星人","美好","风景","孤独","插画"
-    };
 
-    public static void setNetRecommendList(String[] list){
-        mRecommendList = list;
+    public static ImageProvider from(Context ctx){
+        if (ctx instanceof Activity){
+            return  new ImageProvider((Activity) ctx);
+        }
+        throw new IllegalArgumentException("input can't be a application");
     }
 
-    public ImageProvider(Activity act){
+    private ImageProvider(Activity act){
         this.act = act;
-        Utils.initialize(act.getApplication(), "imageLog");
-        dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        dir.mkdir();
-    }
-
-    public ImageProvider(Fragment fragment){
-        this.mFragment = fragment;
-        Utils.initialize(act.getApplication(), "imageLog");
         dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         dir.mkdir();
     }
@@ -84,9 +67,10 @@ public class ImageProvider {
     public void getImageFromCamera(OnImageSelectListener mListener){
         this.mListener = mListener;
         tempImage =  FileUtils.createTmpFile(act);
+        Uri uri = FileProvider.getUriForFile(act,act.getPackageName()+".fileProvider",tempImage);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(tempImage));
+                uri);
        startActivityForResult(intent, REQUEST_CAMERA);
     }
 
@@ -107,81 +91,52 @@ public class ImageProvider {
         startActivityForResult(intent, REQUEST_ALBUM);
     }
 
-    public void getImageFromNet(OnImageSelectListener mListener){
-        this.mListener = mListener;
-        Intent intent = new Intent(act,NetImageSearchActivity.class);
-        startActivityForResult(intent,REQUEST_NET);
-    }
-
     private void startActivityForResult(Intent intent,int requestCode){
-        if (act == null) {
-            mFragment.startActivityForResult(intent, requestCode);
-        }else{
-            act.startActivityForResult(intent, requestCode);
-        }
-    }
-
-
-    public void onActivityResult(int requestCode, int resultCode, final Intent data){
-        if (resultCode != act.RESULT_OK) return ;
-        if (mListener == null) return;
-        switch (requestCode){
-            case REQUEST_CAMERA:
-                mListener.onImageSelect();
-                mListener.onImageLoaded(Uri.fromFile(tempImage));
-                break;
-            case REQUEST_ALBUM:
-                mListener.onImageSelect();
-                List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
-                for (String s : path) {
-                    mListener.onImageLoaded(Uri.fromFile(new File(s)));
+        ActivityResultHooker.startHookFragment(act,requestCode, intent, new OnActivityResultListener() {
+            @Override
+            public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                if (resultCode != act.RESULT_OK) return ;
+                if (mListener == null) return;
+                switch (requestCode){
+                    case REQUEST_CAMERA:
+                        mListener.onImageLoaded(tempImage);
+                        break;
+                    case REQUEST_ALBUM:
+                        List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                        for (String s : path) {
+                            mListener.onImageLoaded(new File(s));
+                        }
+                        break;
+                    case REQUEST_CORP:
+                        mListener.onImageLoaded(tempImage);
+                        break;
                 }
-                break;
-            case REQUEST_NET:
-                mListener.onImageSelect();
-                Log.i("ImageProvider", "Begin Download");
-                String url = data.getStringExtra("data");
-                final File temp = FileUtils.createTmpFile(act);
-                Glide.with(act)
-                        .load(url)
-                        .asBitmap()
-                        .fitCenter()
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                OutputStream os = null;
-                                try {
-                                    os = new BufferedOutputStream(new FileOutputStream(temp));
-                                    resource.compress(Bitmap.CompressFormat.JPEG, 100, os);
-                                    os.close();
-                                    mListener.onImageLoaded(Uri.fromFile(temp));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                    mListener.onError();
-                                }
-                            }
-                        });
-                break;
-            case REQUEST_CORP:
-                mListener.onImageSelect();
-                mListener.onImageLoaded(Uri.fromFile(tempImage));
-                break;
-
-        }
+            }
+        });
     }
 
-    public void corpImage(Uri uri,int width,int height,OnImageSelectListener listener){
+    public void corpImage(File file,int width,int height,OnImageSelectListener listener){
         this.mListener = listener;
         tempImage = FileUtils.createTmpFile(act);
         CropImageIntentBuilder cropImage = new CropImageIntentBuilder(width, height,width, height, Uri.fromFile(tempImage));
-        cropImage.setSourceImage(uri);
-        Intent i;
-        if (act!=null)i = cropImage.getIntent(act);
-        else i = cropImage.getIntent(mFragment.getContext());
+        cropImage.setSourceImage(Uri.fromFile(file));
+        cropImage.setScale(true);
+        Intent i = cropImage.getIntent(act);
         startActivityForResult(i, REQUEST_CORP);
     }
 
-    public static Bitmap readImageWithSize(Uri uri, int outWidth, int outHeight){
-        return Utils.readBitmapAutoSize(uri.getPath(), outWidth, outHeight);
+    public void corpImageAbsolute(File file,int width,int height,OnImageSelectListener listener){
+        this.mListener = listener;
+        tempImage = FileUtils.createTmpFile(act);
+        CropImageIntentBuilder cropImage = new CropImageIntentBuilder(width, height,width, height, Uri.fromFile(tempImage));
+        cropImage.setSourceImage(Uri.fromFile(file));
+        Intent i = cropImage.getIntent(act);
+        startActivityForResult(i, REQUEST_CORP);
     }
+
+    public static Bitmap readImageWithSize(File file, int outWidth, int outHeight){
+        return Utils.readBitmapAutoSize(file.getPath(), outWidth, outHeight);
+    }
+
+
 }

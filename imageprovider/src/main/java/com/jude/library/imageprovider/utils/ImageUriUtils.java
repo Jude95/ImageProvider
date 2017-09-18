@@ -1,4 +1,4 @@
-package com.jude.library.imageprovider;
+package com.jude.library.imageprovider.utils;
 
 import android.content.ContentUris;
 import android.content.Context;

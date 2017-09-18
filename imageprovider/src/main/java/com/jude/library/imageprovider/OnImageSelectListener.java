@@ -1,12 +1,10 @@
 package com.jude.library.imageprovider;
 
-import android.net.Uri;
+import java.io.File;
 
 /**
  * Created by Mr.Jude on 2015/3/29.
  */
 public interface OnImageSelectListener {
-    void onImageSelect();
-    void onImageLoaded(Uri uri);
-    void onError();
+    void onImageLoaded(File file);
 }

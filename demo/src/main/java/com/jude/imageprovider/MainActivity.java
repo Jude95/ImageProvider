@@ -1,9 +1,7 @@
 package com.jude.imageprovider;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,14 +24,12 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements OnImageSelectListener{
 
-    private ImageProvider provider;
     private PieceViewGroup pieceViewGroup;
     private MaterialDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        provider = new ImageProvider(this);
         pieceViewGroup = (PieceViewGroup) findViewById(R.id.piece);
         pieceViewGroup.setOnAskViewListener(new PieceViewGroup.OnAskViewListener() {
             @Override
@@ -50,60 +46,40 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
         }
         new MaterialDialog.Builder(MainActivity.this)
                 .title("选择图片来源")
-                .items(new String[]{"相机","相机+相册","相册","相册(多张)","相机+相册(多张)","网络","裁剪"})
+                .items(new String[]{"相机","相机+相册","相册","相册(多张)","相机+相册(多张)","裁剪"})
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
                         switch (i){
                             case 0:
-                                provider.getImageFromCamera(MainActivity.this);
+                                ImageProvider.from(MainActivity.this).getImageFromCamera(MainActivity.this);
                                 break;
                             case 1:
-                                provider.getImageFromCameraOrAlbum(MainActivity.this);
+                                ImageProvider.from(MainActivity.this).getImageFromCameraOrAlbum(MainActivity.this);
                                 break;
                             case 2:
-                                provider.getImageFromAlbum(MainActivity.this);
+                                ImageProvider.from(MainActivity.this).getImageFromAlbum(MainActivity.this);
                                 break;
                             case 3:
-                                provider.getImageFromAlbum(MainActivity.this, 9);
+                                ImageProvider.from(MainActivity.this).getImageFromAlbum(MainActivity.this, 9);
                                 break;
                             case 4:
-                                provider.getImageFromCameraOrAlbum(MainActivity.this,9);
+                                ImageProvider.from(MainActivity.this).getImageFromCameraOrAlbum(MainActivity.this,9);
                                 break;
                             case 5:
-                                provider.getImageFromNet(MainActivity.this);
-                                break;
-                            case 6:
                                 //裁剪，用相册的图片做例子。
-                                provider.getImageFromAlbum(new OnImageSelectListener() {
+                                ImageProvider.from(MainActivity.this).getImageFromAlbum(new OnImageSelectListener() {
                                     @Override
-                                    public void onImageSelect() {
-
-                                    }
-
-                                    @Override
-                                    public void onImageLoaded(Uri uri) {
+                                    public void onImageLoaded(File file) {
                                         //裁剪来源可以是本地的所有有效URI
-                                        provider.corpImage(uri, 500, 500, new OnImageSelectListener() {
-                                            @Override
-                                            public void onImageSelect() {
-
-                                            }
+                                        ImageProvider.from(MainActivity.this).corpImage(file, 500, 500, new OnImageSelectListener() {
 
                                             @Override
-                                            public void onImageLoaded(Uri uric) {
-                                                addImage(uric);
+                                            public void onImageLoaded(File file) {
+                                                addImage(file);
                                             }
 
-                                            @Override
-                                            public void onError() {
-                                            }
                                         });
-                                    }
-
-                                    @Override
-                                    public void onError() {
-
                                     }
                                 });
                                 break;
@@ -115,37 +91,23 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
 
 
     @Override
-    public void onImageSelect() {
-        dialog = new MaterialDialog.Builder(MainActivity.this)
-                .progress(true,100)
-                .title("加载中")
-                .content("请稍候")
-                .cancelable(false)
-                .show();
-    }
-
-    @Override
-    public void onImageLoaded(Uri uri) {
-        dialog.dismiss();
-        addImage(uri);
-        Log.i("Image", uri.getPath() + " File" + new File(uri.getPath()).exists());
+    public void onImageLoaded(File file) {
+        if (dialog!=null){
+            dialog.dismiss();
+        }
+        addImage(file);
 
     }
 
-    @Override
-    public void onError() {
-        dialog.dismiss();
-        Toast.makeText(this,"Load Error",Toast.LENGTH_SHORT).show();
-    }
 
-    public void addImage(Uri uri){
+    public void addImage(File file){
         ImagePieceView pieceView = new ImagePieceView(MainActivity.this);
         try {
-            Log.i("Image", "Size:" + new FileInputStream(new File(uri.getPath())).available());
+            Log.i("Image", "Size:" + new FileInputStream(file).available());
         } catch (IOException e) {
             Log.i("Image", "Error::"+e.getLocalizedMessage());
         }
-        pieceView.setImageBitmap(ImageProvider.readImageWithSize(uri, 200, 200));
+        pieceView.setImageBitmap(ImageProvider.readImageWithSize(file, 200, 200));
         pieceViewGroup.addView(pieceView);
     }
 
@@ -171,12 +133,6 @@ public class MainActivity extends AppCompatActivity implements OnImageSelectList
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        provider.onActivityResult(requestCode, resultCode, data);
     }
 
     public static final int EXTERNAL_STORAGE_REQ_CODE = 10 ;
